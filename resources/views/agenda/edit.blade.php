@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <div class="container">
-    <h3 class="mb-4">Adicionar Evento</h3>
+    <h3 class="mb-4">Editar Evento</h3>
     <form>
         {{ csrf_field() }}
         @include('agenda.form')

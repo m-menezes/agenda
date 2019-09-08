@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\EventoRequest;
 use App\Eventos;
+use App\User;
 
 class EventoController extends Controller
 {
@@ -14,7 +15,9 @@ class EventoController extends Controller
      */
     public function index()
     {
-        $eventos = Eventos::all()->sortBy('responsavel');
+        $eventos = Eventos::join('users', 'users.id', '=', 'eventos.responsavel')
+                        ->select('eventos.*', 'users.name')
+                        ->get();
         return view('agenda.index', compact('eventos'));
     }
 
@@ -25,7 +28,8 @@ class EventoController extends Controller
      */
     public function create()
     {
-        return view('agenda.create');
+        $Usuarios = User::select('id', 'name')->get();
+        return view('agenda.create', compact('Usuarios'));
     }
 
     /**
@@ -40,17 +44,6 @@ class EventoController extends Controller
         return redirect('agenda');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $evento = Eventos::find($id);
-        return view('agenda.show', compact('evento'));
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -61,7 +54,8 @@ class EventoController extends Controller
     public function edit($id)
     {
         $evento = Eventos::find($id);
-        return view('agenda.create', compact('evento'));
+        $Usuarios = User::select('id', 'name')->get();
+        return view('agenda.edit', compact('evento', 'Usuarios'));
     }
 
     /**
