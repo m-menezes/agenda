@@ -24,12 +24,12 @@ class EventoRequest extends FormRequest
     public function rules(){
         return [
             'titulo' => 'required',
-            'descricao' => 'nullable|sometimes|max:200',
+            'descricao' => 'nullable',
             'responsavel' => 'required',
             'status' => 'required',
-            'data_inicio' => 'required|date',
-            'data_prazo' => 'required|date|after:data_inicio',
-            'data_conclusao' => 'nullable|sometimes|date|after:data_inicio',
+            'data_inicio' => 'required',
+            'data_prazo' => 'required|after:data_inicio',
+            'data_conclusao' => 'nullable|date|after:data_inicio',
         ];
     }
 }

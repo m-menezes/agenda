@@ -20,7 +20,7 @@ class CreateTableEventos extends Migration
             $table->enum('status',['andamento','encerrado'])->default('andamento');
             $table->dateTime('data_inicio');
             $table->dateTime('data_prazo');
-            $table->dateTime('data_conclusao');
+            $table->dateTime('data_conclusao')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('responsavel');
             $table->foreign('responsavel')->references('id')->on('users');

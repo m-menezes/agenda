@@ -2,16 +2,18 @@
 @section('content')
 <div class="container">
     <h3 class="mb-4">Adicionar Evento</h3>
-    <form>
+    <form action="{{route('store')}}" method="post">
         {{ csrf_field() }}
         @include('agenda.form')
+        <button type="submit" class="btn btn-primary mt-3 float-right">Salvar</button>
     </form>
 </div>
 @endsection
 @section('script')
 <script type="text/javascript">
     $(function () {
-        $('.datetimepicker-input').datetimepicker()
+        $('.datetimepicker-input').datetimepicker({
+        });
     });
 </script>
 @endsection

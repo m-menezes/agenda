@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\EventoRequest;
 use App\Eventos;
 use App\User;
+use DateTime;
 
 class EventoController extends Controller
 {
@@ -38,9 +39,20 @@ class EventoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(EventoRequest $request)
-    {
-        Eventos::create($request->all());
+    public function store(EventoRequest $request){
+        $data_inicio = new DateTime($request['data_inicio']);
+        $data_prazo = new DateTime($request['data_prazo']);
+        $data_conclusao = new DateTime($request['data_conclusao']);
+        $evento = [
+            'titulo' => $request['titulo'],
+            'descricao' => $request['descricao'],
+            'status' => $request['status'],
+            'responsavel' => $request['responsavel'],
+            'data_inicio' => $data_inicio->format('Y-m-d H:i:s'),
+            'data_prazo' => $data_prazo->format('Y-m-d H:i:s'),
+            'data_conclusao' => $data_conclusao->format('Y-m-d H:i:s'),
+        ];
+        Eventos::create($evento);
         return redirect('agenda');
     }
 
