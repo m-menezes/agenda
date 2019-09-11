@@ -6,6 +6,8 @@ use App\Http\Requests\EventoRequest;
 use App\Eventos;
 use App\User;
 use DateTime;
+use Auth;
+use Redirect;
 
 class EventoController extends Controller
 {
@@ -14,12 +16,30 @@ class EventoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(){
         $eventos = Eventos::join('users', 'users.id', '=', 'eventos.responsavel')
                         ->select('eventos.*', 'users.name')
+                        ->where('eventos.responsavel', Auth::user()->id )
                         ->get();
         return view('agenda.index', compact('eventos'));
+    }
+
+    /**
+     * Search events in db from two dates
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request){
+        /* Find eventos entre datas selecionadas */
+        $eventos = Eventos::join('users', 'users.id', '=', 'eventos.responsavel')
+            ->select('eventos.*', 'users.name')
+            ->where('eventos.responsavel', Auth::user()->id )
+            ->whereBetween('data_inicio',[ $request['data_inicio'], $request['data_prazo'] ])
+            ->WhereBetween('data_prazo', [ $request['data_inicio'], $request['data_prazo'] ])
+            ->get();
+
+        return view('agenda.search', compact('eventos'));
     }
 
     /**
@@ -27,8 +47,7 @@ class EventoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create(){
         $Usuarios = User::select('id', 'name')->get();
         return view('agenda.create', compact('Usuarios'));
     }
@@ -40,20 +59,30 @@ class EventoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(EventoRequest $request){
-        $data_inicio = new DateTime($request['data_inicio']);
-        $data_prazo = new DateTime($request['data_prazo']);
-        $data_conclusao = new DateTime($request['data_conclusao']);
-        $evento = [
-            'titulo' => $request['titulo'],
-            'descricao' => $request['descricao'],
-            'status' => $request['status'],
-            'responsavel' => $request['responsavel'],
-            'data_inicio' => $data_inicio->format('Y-m-d H:i:s'),
-            'data_prazo' => $data_prazo->format('Y-m-d H:i:s'),
-            'data_conclusao' => $data_conclusao->format('Y-m-d H:i:s'),
-        ];
-        Eventos::create($evento);
-        return redirect('agenda');
+
+        /* Find eventos entre datas selecionadas */
+        $ee = Eventos::join('users', 'users.id', '=', 'eventos.responsavel')
+                ->select('eventos.*', 'users.name')
+                ->where('eventos.responsavel', Auth::user()->id )
+                ->whereBetween('data_inicio',[$request['data_inicio'],$request['data_prazo']])
+                ->orWhereBetween('data_prazo',[$request['data_inicio'],$request['data_prazo']])
+                ->first();
+
+        /* Find eventos que engloebem as datas selecionadas */
+        $eg = Eventos::join('users', 'users.id', '=', 'eventos.responsavel')
+                        ->select('eventos.*', 'users.name')
+                        ->where('eventos.responsavel', Auth::user()->id )
+                        ->where('data_inicio', '<', $request['data_inicio'])
+                        ->where('data_prazo', '>', $request['data_prazo'])
+                        ->first();
+
+        /* Retorna ao usuário mensagem de erro ou retorna para agenda caso sucesso */
+        if($ee || $eg){
+            return Redirect::back()->withErrors(['As datas selecionadas coincidem com eventos já cadastrados no sistema']);
+        } else{
+            Eventos::create($request->all());
+            return redirect('agenda');
+        }
     }
 
 
@@ -63,8 +92,7 @@ class EventoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id){
         $evento = Eventos::find($id);
         $Usuarios = User::select('id', 'name')->get();
         return view('agenda.edit', compact('evento', 'Usuarios'));
@@ -77,8 +105,7 @@ class EventoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(EventoRequest $request, $id){
         $evento = Eventos::find($id);
         $evento->fill($request->all());
         $evento->update();

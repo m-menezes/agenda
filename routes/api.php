@@ -16,3 +16,15 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/help',             'EventoApiController@help')->name('help');
+
+Route::group(['prefix' => 'agenda'],  function () {
+    Route::get('/',             'EventoApiController@index')->name('agenda');
+    Route::get('/search',       'EventoApiController@search')->name('search');
+    Route::get('/{id}',         'EventoApiController@show')->name('show');
+    Route::post('/store',       'EventoApiController@store')->name('store');
+    Route::put('/update/{id}',  'EventoApiController@update')->name('update');
+    Route::delete('/{id}',      'EventoApiController@destroy')->name('destroy');
+});
+

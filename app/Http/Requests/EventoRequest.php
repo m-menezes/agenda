@@ -28,8 +28,8 @@ class EventoRequest extends FormRequest
             'responsavel' => 'required',
             'status' => 'required',
             'data_inicio' => 'required',
-            'data_prazo' => 'required|after:data_inicio',
-            'data_conclusao' => 'nullable|date|after:data_inicio',
+            'data_prazo' => 'required|date|after:data_inicio',
+            'data_conclusao' => 'nullable|after:data_inicio',
         ];
     }
 }

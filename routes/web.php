@@ -16,10 +16,11 @@ Route::get('/', 'HomeController@index')->name('home');
 
 // rota autenticada de toda agenda
 Route::group(['middleware' => ['auth'], 'prefix' => 'agenda'],  function () {
-    Route::get('/',         'EventoController@index')->name('agenda');
-    Route::get('/create',   'EventoController@create')->name('create');
-    Route::post('/store',        'EventoController@store')->name('store');
-    Route::get('/edit/{id}','EventoController@edit')->name('edit');
-    Route::put('/{id}',     'EventoController@update')->name('update');
-    Route::delete('/{id}',  'EventoController@destroy')->name('destroy');
+    Route::get('/',         'EventoController@index'    )->name('agenda');
+    Route::post('/search',   'EventoController@search'    )->name('search');
+    Route::get('/create',   'EventoController@create'   )->name('create');
+    Route::post('/store',   'EventoController@store'    )->name('store');
+    Route::get('/edit/{id}','EventoController@edit'     )->name('edit');
+    Route::put('/{id}',     'EventoController@update'   )->name('update');
+    Route::get('/{id}',     'EventoController@destroy'  )->name('destroy');
 });
