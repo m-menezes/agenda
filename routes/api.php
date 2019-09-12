@@ -18,6 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/help',             'EventoApiController@help')->name('help');
+Route::get('/users',             'EventoApiController@users')->name('users');
 
 Route::group(['prefix' => 'agenda'],  function () {
     Route::get('/',             'EventoApiController@index')->name('agenda');

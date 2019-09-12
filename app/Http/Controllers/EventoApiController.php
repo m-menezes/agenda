@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Eventos;
+use App\User;
 use DateTime;
 use Auth;
 use Illuminate\Http\Request;
@@ -19,7 +20,18 @@ class EventoApiController extends Controller
         ->get();
         return response()->json($eventos);
     } 
-    
+
+     /**
+     * Display a listing of users.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function users(){
+        $Usuarios = User::select('id', 'name')->get();
+        return response()->json($Usuarios);
+    } 
+
+
     /**
      * Show description api.
      *
@@ -79,6 +91,11 @@ class EventoApiController extends Controller
                 "Campos Obrigatórios" => [
                     "id" => 1,
                 ]
+            ],
+            "users" => [
+                "Method" => "GET",
+                "url" => "http://localhost:8000/api/users",
+                "Observação" => "Retorna listagem de usuários com seu ID"
             ],
 		];
         return response()->json($api);
