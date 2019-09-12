@@ -6,11 +6,6 @@
             <h3 class="mb-4">Editar Evento</h3>
         </div>
         <div class="col-12">
-            <div class="alert alert-primary" role="alert">
-                Caso a data de conclusão seja selecionada, o projeto será automaticamente concluido
-            </div>
-        </div>
-        <div class="col-12">
             <form action="{{route('update', $evento->id)}}" method="POST">
                 @method('PUT')
                 @include('agenda.form')
